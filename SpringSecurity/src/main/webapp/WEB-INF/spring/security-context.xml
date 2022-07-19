@@ -9,13 +9,26 @@
 	http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
 <security:http auto-config="true" use-expressions="true">
+ 	<security:intercept-url pattern="/login" access="permitAll"/>
+	<security:intercept-url pattern="/*" access="hasRole('ROLE_USER')"/>
+	<!-- username,password parameter은 input태그에서 name값 파싱
+		default-target-url 로그인 성공시 호출 url
+		login-processing-url 스프링에서 처리하는 url -->
+	<security:form-login 
+		login-page="/login" 
+		login-processing-url="/j_spring_security_check"
+		default-target-url="/"
+		username-parameter="loginid"
+		password-parameter="loginpwd"
+		/>
+	<security:logout logout-url="/logout" logout-success-url="/" invalidate-session="true"
+		delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+<!-- remember me는 간단한 쿠키를 암호화 하며, 사용자의 브라우저에 저장해 재방문하는 사용자를 기억하는 기능 -->
+	<security:remember-me key="ReMemberMe" token-validity-seconds="604800" />
+
 <!-- spring security는 CSRF공격을 막기위해 랜덤토큰인증방식을 사용
 	spring security 3.x버전 이후로는 적절한 CSRF토큰을 포함시켜 줘야한다 -->
 	<security:csrf disabled="true"/>
-	<security:intercept-url pattern="/login.do" access="permitAll"/>
-	<security:intercept-url pattern="/*" access="hasRole('ROLE_USER')"/>
-	<security:form-login login-page="/login.do"/>
-	<security:logout logout-url="/logout" logout-success-url="/"/>
 </security:http>
 
 <security:authentication-manager alias="authenticationManager">
@@ -25,7 +38,6 @@
 		</security:user-service>
 	</security:authentication-provider>
 </security:authentication-manager>
-
 
 
 </beans>

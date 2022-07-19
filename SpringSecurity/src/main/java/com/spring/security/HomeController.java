@@ -32,6 +32,7 @@ public class HomeController {
 		
 		model.addAttribute("serverTime", formattedDate );
 		
+		logger.info("홈 화면 진입");
 		return "home";
 	}
 
